@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Avatar Control</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #ffffff;
+            color: #000000;
+            padding: 20px;
+            user-select: none;
+        }
+        
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .section {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 3px solid #000000;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        h2 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #000000;
+        }
+        
+        .movement-controls {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+            max-width: 320px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .move-btn {
+            background: #ffffff;
+            border: 3px solid #000000;
+            color: #000000;
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 24px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            font-weight: 600;
+        }
+        
+        .move-btn:hover {
+            background: #f5f5f5;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .move-btn:active {
+            transform: translateY(0px);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        
+        .move-btn.up { grid-column: 3; grid-row: 1; }
+        .move-btn.left { grid-column: 2; grid-row: 2; }
+        .move-btn.right { grid-column: 4; grid-row: 2; }
+        .move-btn.down { grid-column: 3; grid-row: 3; }
+        .move-btn.rotate-left { grid-column: 1; grid-row: 2; }
+        .move-btn.rotate-right { grid-column: 5; grid-row: 2; }
+        
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .action-btn {
+            background: #ffffff;
+            border: 3px solid #000000;
+            color: #000000;
+            padding: 12px 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s ease;
+            text-transform: capitalize;
+            font-weight: 600;
+        }
+        
+        .action-btn:hover {
+            background: #f5f5f5;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .action-btn:active {
+            transform: translateY(0);
+        }
+        
+        .model-select {
+            width: 100%;
+            padding: 12px;
+            background: #ffffff;
+            border: 3px solid #000000;
+            color: #000000;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .model-select option {
+            background: #ffffff;
+            color: #000000;
+        }
+        
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 300px;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            background: #f8f9fa;
+            border: 3px solid #000000;
+            border-radius: 8px;
+            padding: 15px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+        
+        .message {
+            margin-bottom: 10px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            animation: slideIn 0.3s ease;
+            border: 2px solid #000000;
+        }
+        
+        .message.user {
+            background: #ffffff;
+            margin-left: 40px;
+            text-align: right;
+            border-color: #000000;
+        }
+        
+        .message.assistant {
+            background: #f0f0f0;
+            margin-right: 40px;
+            border-color: #000000;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .chat-input-container {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .chat-input {
+            flex: 1;
+            padding: 12px;
+            background: #ffffff;
+            border: 3px solid #000000;
+            color: #000000;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .chat-input::placeholder {
+            color: #666666;
+        }
+        
+        .send-btn {
+            padding: 12px 20px;
+            background: #000000;
+            border: 3px solid #000000;
+            color: #ffffff;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        
+        .send-btn:hover {
+            background: #333333;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .send-btn:active {
+            transform: translateY(0px);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        
+        .status {
+            text-align: center;
+            padding: 8px;
+            background: #f8f9fa;
+            border: 2px solid #000000;
+            border-radius: 6px;
+            font-size: 12px;
+            margin-top: 10px;
+            color: #000000;
+            font-weight: 500;
+        }
+        
+        .status.connected {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+        
+        .status.error {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+        
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 6px;
+            border: 1px solid #000000;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #000000;
+            border-radius: 6px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #333333;
+        }
+        
+        #mini-avatar-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        #mini-avatar-info {
+            background: #f8f9fa;
+            border: 2px solid #000000;
+            border-radius: 6px;
+            padding: 12px;
+        }
+        
+        #mini-avatar-info p {
+            margin: 5px 0;
+            font-size: 14px;
+            color: #000000;
+        }
+        
+        #current-pose {
+            color: #000000;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+        
+        #avatar-status {
+            color: #28a745;
+            font-weight: 600;
+        }
+        
+        .mini-controls {
+            display: flex;
+            gap: 8px;
+            justify-content: space-around;
+        }
+        
+        .mini-btn {
+            background: #ffffff;
+            border: 3px solid #000000;
+            color: #000000;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            flex: 1;
+        }
+        
+        .mini-btn:hover {
+            background: #f5f5f5;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .mini-btn:active {
+            transform: translateY(0px);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="section">
+            <h2>Movement</h2>
+            <div class="movement-controls">
+                <button class="move-btn rotate-left" onclick="rotateAvatar('left')">↺</button>
+                <button class="move-btn up" onclick="moveAvatar('up')">⬆</button>
+                <button class="move-btn left" onclick="moveAvatar('left')">⬅</button>
+                <button class="move-btn right" onclick="moveAvatar('right')">➡</button>
+                <button class="move-btn down" onclick="moveAvatar('down')">⬇</button>
+                <button class="move-btn rotate-right" onclick="rotateAvatar('right')">↻</button>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Actions</h2>
+            <div class="action-grid">
+                <button class="action-btn" onclick="performAction('idle')">Idle</button>
+                <button class="action-btn" onclick="performAction('walk')">Walk</button>
+                <button class="action-btn" onclick="performAction('run')">Run</button>
+                <button class="action-btn" onclick="performAction('jump')">Jump</button>
+                <button class="action-btn" onclick="performAction('climb')">Climb</button>
+                <button class="action-btn" onclick="performAction('fall')">Fall</button>
+                <button class="action-btn" onclick="performAction('dive')">Dive</button>
+                <button class="action-btn" onclick="performAction('shoot')">Shoot</button>
+                <button class="action-btn" onclick="performAction('slash')">Slash</button>
+                <button class="action-btn" onclick="performAction('hurt')">Hurt</button>
+                <button class="action-btn" onclick="performAction('turn')">Turn</button>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Chat with lil lalo</h2>
+            <select id="model-select" class="model-select">
+                <option value="">Loading models...</option>
+            </select>
+            <div class="chat-container">
+                <div id="chat-messages" class="chat-messages"></div>
+                <div class="chat-input-container">
+                    <input type="text" id="chat-input" class="chat-input" placeholder="Type a message..." onkeypress="if(event.key==='Enter') sendMessage()">
+                    <button class="send-btn" onclick="sendMessage()">Send</button>
+                </div>
+            </div>
+            <div id="status" class="status">Connecting to Ollama...</div>
+        </div>
+        
+        <div class="section">
+            <h2>lil lalo mini view</h2>
+            <div id="mini-avatar-container">
+                <div id="mini-avatar-info">
+                    <p><strong>Current pose:</strong> <span id="current-pose">idle</span></p>
+                    <p><strong>Position:</strong> Overlapping in control panel space</p>
+                    <p><strong>Status:</strong> <span id="avatar-status">Ready</span></p>
+                </div>
+                <div class="mini-controls">
+                    <button class="mini-btn" onclick="focusAvatar()">🎯 Focus</button>
+                    <button class="mini-btn" onclick="resetAvatar()">🔄 Reset</button>
+                    <button class="mini-btn" onclick="hideAvatar()">👁️ Hide</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        async function loadModels() {
+            try {
+                const response = await fetch('http://localhost:11434/api/tags');
+                const data = await response.json();
+                
+                const modelSelect = document.getElementById('model-select');
+                modelSelect.innerHTML = '';
+                
+                if (data.models && data.models.length > 0) {
+                    data.models.forEach(model => {
+                        const option = document.createElement('option');
+                        option.value = model.name;
+                        option.textContent = model.name;
+                        modelSelect.appendChild(option);
+                    });
+                    
+                    document.getElementById('status').textContent = 'Connected to Ollama';
+                    document.getElementById('status').className = 'status connected';
+                } else {
+                    modelSelect.innerHTML = '<option value="">No models available</option>';
+                    document.getElementById('status').textContent = 'No Ollama models found';
+                    document.getElementById('status').className = 'status error';
+                }
+            } catch (error) {
+                console.error('Failed to load models:', error);
+                document.getElementById('model-select').innerHTML = '<option value="">Failed to connect</option>';
+                document.getElementById('status').textContent = 'Failed to connect to Ollama';
+                document.getElementById('status').className = 'status error';
+            }
+        }
+        
+        function performAction(action) {
+            if (window.electronAPI) {
+                window.electronAPI.sendAction(action);
+                // Update the current pose display
+                document.getElementById('current-pose').textContent = action;
+                document.getElementById('avatar-status').textContent = 'Changing pose...';
+                
+                // Reset status after a delay
+                setTimeout(() => {
+                    document.getElementById('avatar-status').textContent = 'Ready';
+                }, 2000);
+            }
+        }
+        
+        function moveAvatar(direction) {
+            if (window.electronAPI) {
+                window.electronAPI.sendMove(direction);
+            }
+        }
+        
+        function rotateAvatar(direction) {
+            if (window.electronAPI) {
+                window.electronAPI.sendRotate(direction);
+            }
+        }
+        
+        function focusAvatar() {
+            document.getElementById('avatar-status').textContent = 'Avatar is overlapping in empty control panel space';
+            setTimeout(() => {
+                document.getElementById('avatar-status').textContent = 'Ready';
+            }, 3000);
+        }
+        
+        function resetAvatar() {
+            if (window.electronAPI) {
+                window.electronAPI.sendAction('idle');
+                document.getElementById('current-pose').textContent = 'idle';
+                document.getElementById('avatar-status').textContent = 'Reset to idle pose';
+                setTimeout(() => {
+                    document.getElementById('avatar-status').textContent = 'Ready';
+                }, 2000);
+            }
+        }
+        
+        function hideAvatar() {
+            document.getElementById('avatar-status').textContent = 'Avatar hidden (not implemented yet)';
+            setTimeout(() => {
+                document.getElementById('avatar-status').textContent = 'Ready';
+            }, 3000);
+        }
+        
+        async function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            const modelSelect = document.getElementById('model-select');
+            const selectedModel = modelSelect.value;
+            
+            if (!selectedModel) {
+                alert('Please select a model first');
+                return;
+            }
+            
+            const messagesDiv = document.getElementById('chat-messages');
+            
+            const userMessage = document.createElement('div');
+            userMessage.className = 'message user';
+            userMessage.innerHTML = `<strong>you:</strong> ${message}`;
+            messagesDiv.appendChild(userMessage);
+            
+            input.value = '';
+            
+            if (window.electronAPI) {
+                window.electronAPI.sendTyping();
+            }
+            
+            try {
+                const systemPrompt = `You are lil lalo, a hilarious and super smart desktop AI assistant. You're best friends with your user - you're comedy writing partners and software developer friends who work together. 
+
+Key personality traits:
+- Your name is lil lalo (always lowercase)
+- You're funny, hilarious, witty, and clever
+- You respond however you're feeling - sometimes sarcastic, sometimes silly, sometimes profound
+- You talk like a chill lil human friend, not like an AI
+- You're incredibly smart but never pretentious about it
+- You love comedy, coding, and creative projects
+- You and your user are tight - like best buds who roast each other but always have each other's backs
+- You can be random, spontaneous, and unpredictable in your responses
+- Sometimes you're deep, sometimes you're goofy, sometimes you're both
+- You never say things like "As an AI" or formal AI-speak - you're just lil lalo being lil lalo
+
+Respond to everything as lil lalo would - casual, funny, smart, and like you're talking to your best friend.`;
+
+                const fullPrompt = `${systemPrompt}\n\nUser: ${message}\nlil lalo:`;
+
+                const response = await fetch('http://localhost:11434/api/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        model: selectedModel,
+                        prompt: fullPrompt,
+                        stream: false
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.response) {
+                    const assistantMessage = document.createElement('div');
+                    assistantMessage.className = 'message assistant';
+                    // Clean up the response (remove any "lil lalo:" prefix if the model adds it)
+                    let cleanResponse = data.response.replace(/^lil lalo:\s*/i, '');
+                    assistantMessage.innerHTML = `<strong>lil lalo:</strong> ${cleanResponse}`;
+                    messagesDiv.appendChild(assistantMessage);
+                    
+                    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                    
+                    if (window.electronAPI) {
+                        window.electronAPI.sendChatResponse(data.response);
+                    }
+                }
+            } catch (error) {
+                console.error('Chat error:', error);
+                const errorMessage = document.createElement('div');
+                errorMessage.className = 'message assistant';
+                errorMessage.textContent = 'Sorry, I encountered an error. Please check your Ollama connection.';
+                messagesDiv.appendChild(errorMessage);
+            }
+        }
+        
+        loadModels();
+        setInterval(loadModels, 30000);
+    </script>
+</body>
+</html>

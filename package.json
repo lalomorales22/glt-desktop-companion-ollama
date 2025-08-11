@@ -1,0 +1,54 @@
+{
+  "name": "desktop-companion",
+  "version": "1.0.0",
+  "description": "A translucent desktop companion with GLB avatar and Ollama chat integration",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "start-simple": "electron main-simple.js",
+    "build": "electron-builder",
+    "dist": "electron-builder --mac --win --linux"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5"
+  },
+  "keywords": [
+    "electron",
+    "desktop",
+    "companion",
+    "avatar",
+    "3d",
+    "ollama",
+    "chat"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1"
+  },
+  "build": {
+    "appId": "com.example.desktop-companion",
+    "productName": "Desktop Companion",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "index.html",
+      "control.html",
+      "*.glb"
+    ],
+    "mac": {
+      "category": "public.app-category.entertainment"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
+  }
+}
