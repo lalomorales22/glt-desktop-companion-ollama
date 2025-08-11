@@ -1,4 +1,5 @@
 # Desktop Companion - GLB Avatar with Ollama Chat
+<img width="440" height="1777" alt="Screenshot 2025-08-11 at 2 26 16 PM" src="https://github.com/user-attachments/assets/2bf6b01b-207c-46d4-975f-1ba5880b4314" />
 
 A translucent Electron app that displays an interactive 3D avatar on your desktop with Ollama AI chat integration.
 
